@@ -194,3 +194,25 @@ clean-auto:
 	rm -rIv **/aw-server-rust/target
 	rm -rIv **/aw-android/mobile/build
 	rm -rIfv **/node_modules
+
+# Game UI targets
+# ----------------
+gameui-install:
+	cd aw-gameui && npm install
+
+gameui-build:
+	cd aw-gameui && npm run build
+
+gameui-dev:
+	cd aw-gameui && npm run dev
+
+gameui-copy: gameui-build
+	@if [ -d "aw-server/aw_server/static" ]; then \
+		mkdir -p aw-server/aw_server/static/gameui; \
+		cp -r aw-gameui/dist/* aw-server/aw_server/static/gameui/; \
+		echo "Copied aw-gameui build to aw-server/aw_server/static/gameui/"; \
+	else \
+		echo "Warning: aw-server submodule not found. Initialize submodules first."; \
+	fi
+
+gameui-integrate: gameui-build gameui-copy
