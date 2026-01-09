@@ -1,0 +1,28 @@
+# Makefile additions for aw-gameui integration
+
+.PHONY: gameui-install gameui-build gameui-dev gameui-copy
+
+# Install dependencies for aw-gameui
+gameui-install:
+	cd aw-gameui && npm install
+
+# Build aw-gameui
+gameui-build:
+	cd aw-gameui && npm run build
+
+# Run aw-gameui dev server
+gameui-dev:
+	cd aw-gameui && npm run dev
+
+# Copy built assets to aw-server (requires aw-server submodule)
+gameui-copy: gameui-build
+	@if [ -d "aw-server/aw_server/static" ]; then \
+		mkdir -p aw-server/aw_server/static/gameui; \
+		cp -r aw-gameui/dist/* aw-server/aw_server/static/gameui/; \
+		echo "Copied aw-gameui build to aw-server/aw_server/static/gameui/"; \
+	else \
+		echo "Warning: aw-server submodule not found. Initialize submodules first."; \
+	fi
+
+# Full build: gameui + copy to aw-server
+gameui-integrate: gameui-build gameui-copy
